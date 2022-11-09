@@ -1,4 +1,8 @@
-FROM openjdk:8-jre-alpine
-ADD target/achat-1.0.jar achat-1.0.jar
-EXPOSE 8089
-CMD ["java", "-jar", "/achat-1.0.jar"]
+FROM node:latest as node
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build --prod
+#stage 2
+FROM nginx:alpine
+COPY --from=node /app/dist/demo-app /usr/share/nginx/html
